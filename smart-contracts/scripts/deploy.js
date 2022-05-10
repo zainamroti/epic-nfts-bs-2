@@ -1,5 +1,4 @@
 const { ethers } = require("hardhat");
-const { ZEE_CARDS_TOKEN_CONTRACT_ADDRESS } = require("../constants");
 
 async function main() {
   const zeeCardsTokenAddress = ZEE_CARDS_TOKEN_CONTRACT_ADDRESS;
