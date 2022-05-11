@@ -2,7 +2,7 @@
 
 const main = async () => {
     const nftContractFactory = await hre.ethers.getContractFactory("MyEpicNFT");
-    const myNftContract = await nftContractFactory.deploy();
+    const myNftContract = await nftContractFactory.deploy("https://epic-nfts-bs-2.vercel.app/api/");
 
     await myNftContract.deployed(); 
 

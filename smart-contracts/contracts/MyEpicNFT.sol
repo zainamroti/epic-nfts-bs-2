@@ -11,9 +11,11 @@ contract MyEpicNFT is ERC721URIStorage {
   // Magic given to us by OpenZeppelin to help us keep track of tokenIds.
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
+  string private baseTokenURI;
 
   // We need to pass the name of our NFTs token and its symbol.
-  constructor() ERC721 ("SquareNFT", "SQUARE") {
+  constructor(string memory _tokenURI) ERC721 ("SquareNFT", "SQUARE") {
+    baseTokenURI = _tokenURI;
     console.log("This is my NFT contract. Woah!");
   }
 
@@ -26,7 +28,7 @@ contract MyEpicNFT is ERC721URIStorage {
     _safeMint(msg.sender, newItemId);
 
     // Set the NFTs data.
-    _setTokenURI(newItemId, "blah");
+    _setTokenURI(newItemId, baseTokenURI);
 
     // Increment the counter for when the next NFT is minted.
     _tokenIds.increment();
