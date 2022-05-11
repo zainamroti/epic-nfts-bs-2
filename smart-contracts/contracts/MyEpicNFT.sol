@@ -14,7 +14,6 @@ contract MyEpicNFT is ERC721URIStorage {
   // Magic given to us by OpenZeppelin to help us keep track of tokenIds.
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
-  string private baseTokenURI;
 
   // This is our SVG code. All we need to change is the word that's displayed. Everything else stays the same.
   // So, we make a baseSvg variable here that all our NFTs can use.
@@ -28,8 +27,7 @@ contract MyEpicNFT is ERC721URIStorage {
 
 
   // We need to pass the name of our NFTs token and its symbol.
-  constructor(string memory _tokenURI) ERC721 ("SquareNFT", "SQUARE") {
-    baseTokenURI = _tokenURI;
+  constructor() ERC721 ("SquareNFT", "SQUARE") {
     console.log("This is my NFT contract. Woah!");
   }
 
