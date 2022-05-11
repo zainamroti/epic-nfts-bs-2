@@ -1,9 +1,7 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import React, { useEffect } from "react";
-import twitterLogo from './assets/twitter-logo.svg';
-
+import React, { useEffect, useState } from "react";
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from '../constants';
 // Constants
 const TWITTER_HANDLE = 'zainamroti';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
@@ -63,6 +61,33 @@ export default function Home() {
     }
   }
 
+  const askContractToMintNft = async () => {
+
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
+        console.log("Going to pop wallet now to pay gas...")
+        let nftTxn = await connectedContract.makeAnEpicNFT();
+
+        console.log("Mining...please wait.")
+        await nftTxn.wait();
+
+        console.log(`Mined, see transaction: https://ropsten.etherscan.io/tx/${nftTxn.hash}`);
+
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   // Render Methods
   const renderNotConnectedContainer = () => (
     <button onClick={connectWallet} className={[styles.ctaButton, styles.connectWalletButton].join(" ")}>
@@ -93,7 +118,7 @@ export default function Home() {
             {currentAccount === "" ? (
               renderNotConnectedContainer()
             ) : (
-              <button onClick={null} className={[styles.ctaButton, styles.connectWalletButton].join(" ")}>
+              <button onClick={askContractToMintNft} className={[styles.ctaButton, styles.connectWalletButton].join(" ")}>
                 Mint NFT
               </button>
             )}
@@ -102,7 +127,7 @@ export default function Home() {
       </main>
 
       <footer className={styles.footerContainer}>
-        <img alt="Twitter Logo" className={styles.twitterLogo} src={twitterLogo} />
+        <img alt="Twitter Logo" className={styles.twitterLogo} src={"twitter-logo.svg"} />
         <a
           className={styles.footerText}
           href={TWITTER_LINK}
