@@ -16,7 +16,7 @@ const main = async () => {
     console.log("Minted NFT #1");
 }
 
-main().then(() => process.exit(0)).catch(() => {
+main().then(() => process.exit(0)).catch((error) => {
     console.error(error);
     process.exit(1);
 });
