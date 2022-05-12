@@ -18,6 +18,7 @@ contract MyEpicNFT is ERC721URIStorage {
   // Magic given to us by OpenZeppelin to help us keep track of tokenIds.
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
+  uint public maxNFTs = 11;
 
   // This is our SVG code. All we need to change is the word that's displayed. Everything else stays the same.
   // So, we make a baseSvg variable here that all our NFTs can use.
@@ -71,7 +72,14 @@ contract MyEpicNFT is ERC721URIStorage {
       return uint256(keccak256(abi.encodePacked(input)));
   }
 
+  //to show case how many nfts are minted out of max 50;
+  function getNFTCount() public view returns (uint) {
+    return _tokenIds.current();
+  }
+
   function makeAnEpicNFT() public {
+    require(_tokenIds.current() < maxNFTs, string(abi.encodePacked("Max ", Strings.toString(maxNFTs), " NFTs can be minted.")));
+
     uint256 newItemId = _tokenIds.current();
 
     // We go and randomly grab one word from each of the three arrays.
