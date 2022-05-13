@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require("dotenv").config({ path: ".env" });
+require("@nomiclabs/hardhat-etherscan");
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -24,6 +25,10 @@ const ALCHEMY_API_KEY_URL_ROPSTEN = process.env.ALCHEMY_API_KEY_URL_ROPSTEN;
 const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
 const ROPSTEN_PRIVATE_KEY = process.env.ROPSTEN_PRIVATE_KEY;
 
+//API KEY IS NEEDED for etherscan Contract verifications through hardhat.
+//then -> npx hardhat verify YOUR_CONTRACT_ADDRESS --network rinkeby 
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+
 module.exports = {
   solidity: "0.8.4",
   networks: {
@@ -36,4 +41,9 @@ module.exports = {
       accounts: [ROPSTEN_PRIVATE_KEY],
     },
   },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: ETHERSCAN_API_KEY,
+  }
 };

@@ -90,7 +90,7 @@ export default function Home() {
 
     // If user is not connected to the Rinkeby network, let them know and throw an error
     const { chainId } = await web3Provider.getNetwork();
-    if (chainId !== 3) {
+    if (chainId !== 4) {
       window.alert("Change the network to Rinkeby");
       throw new Error("Change network to Rinkeby");
     }
@@ -198,8 +198,10 @@ export default function Home() {
       console.log(`BSCG> ${base64SVG}`);
 
 
+      // // We set the title of our NFT as the generated word.
+      const metaData = '{"name": "3w NFT # ' + (nftCount) + '","description": "A highly acclaimed collection of Legal NFTs.", "image": "data:image/svg+xml;base64,' + base64SVG + '"}';
       // We set the title of our NFT as the generated word.
-      const metaData = `"{'name': 'My 3w NFT', 'description': 'A highly acclaimed collection of Legal NFTs.',  'image': 'data:image/svg+xml;base64,${base64SVG}'}"`;
+      // const metaData = `'{"name": "My 3w NFT","description": "A highly acclaimed collection of Legal NFTs.","image": "data:image/svg+xml;base64,${base64SVG}}"'`;
 
 
       const base64JsonMetadata = Buffer.from(metaData).toString('base64');
@@ -217,8 +219,7 @@ export default function Home() {
 
   }
 
-  const getNFTcID = async (event) => {
-    event.preventDefault();
+  const getNFTcID = async () => {
     // We go and randomly grab one word from each of the three arrays.
     const first = pickRandomFirstWord();
     const second = pickRandomSecondWord();
@@ -230,9 +231,7 @@ export default function Home() {
     const finalSvg = `${svgPartOne}${randomColor}${svgPartTwo}${combinedWord}</text></svg>`;
 
     console.log(`Getting NFT URL > SVg ==>   ${finalSvg}`);
-    setLoading(true);
     const url = await uploadToIPFS(finalSvg);
-    setLoading(false);
     return url;
     //Generate 3 word Square SVG NFTs here  
     //upload them to IPFS 
@@ -257,8 +256,8 @@ export default function Home() {
       console.log("Mining...please wait.")
       await nftTxn.wait();
 
-      setLoading(false);
       console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+      setLoading(false);
 
 
     } catch (error) {
@@ -315,7 +314,7 @@ export default function Home() {
           {!walletConnected ? (
             renderNotConnectedContainer()
           ) : (
-            <button disabled={loading} onClick={getNFTcID} className={[styles.ctaButton, styles.connectWalletButton].join(" ")}>
+            <button disabled={loading} onClick={askContractToMintNft} className={[styles.ctaButton, styles.connectWalletButton].join(" ")}>
               Mint NFT
             </button>
           )}

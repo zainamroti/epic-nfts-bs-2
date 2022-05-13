@@ -124,7 +124,7 @@ contract MyEpicNFT is ERC721URIStorage {
     emit NewEpicNFTMinted(msg.sender, newItemId);
   }
 
-  function mintIpfsNFT(ipfsTokenURI) public {
+  function mintIpfsNFT(string memory ipfsTokenURI) public {
     require(_tokenIds.current() < maxNFTs, string(abi.encodePacked("Max ", Strings.toString(maxNFTs), " NFTs can be minted.")));
 
     uint256 newItemId = _tokenIds.current();
