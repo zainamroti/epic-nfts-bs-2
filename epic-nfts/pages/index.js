@@ -4,11 +4,34 @@ import React, { useEffect, useState, useRef } from "react";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '../constants';
 import { ethers } from 'ethers';
 import Web3Modal from "web3modal";
+import { pickRandomFirstWord, pickRandomSecondWord, pickRandomThirdWord, pickRandomColor, svgPartOne, svgPartTwo, getBase64 } from '../utils/utils'
+import { create } from 'ipfs-http-client'
+
+
+
+const ifpsConfig = {
+  // host: "ipfs.infura.io",
+  host: "infura-ipfs.io",
+  port: 5001,
+  protocol: "https",
+};
+
+const ipfs = create(ifpsConfig);
+
+
 // Constants
 const TWITTER_HANDLE = 'zainamroti';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 11;
+
+
+// or specifying a specific API path
+// const ipfs = create({ host: 'infura-ipfs.io', port: '5001', apiPath: '/ipfs/api/v0' })
+
+/* Create an instance of the client */
+// const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
+
 
 
 export default function Home() {
@@ -65,11 +88,11 @@ export default function Home() {
     const provider = await web3ModalRef.current.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
 
-    // If user is not connected to the Ropsten network, let them know and throw an error
+    // If user is not connected to the Rinkeby network, let them know and throw an error
     const { chainId } = await web3Provider.getNetwork();
     if (chainId !== 3) {
-      window.alert("Change the network to Ropsten");
-      throw new Error("Change network to Ropsten");
+      window.alert("Change the network to Rinkeby");
+      throw new Error("Change network to Rinkeby");
     }
 
     if (needSigner) {
@@ -151,6 +174,72 @@ export default function Home() {
     }
   }
 
+
+
+  const addDataToIPFS = async (metadata) => {
+    const ipfsHash = await ipfs.add(metadata);
+    return ipfsHash.cid.toString();
+  };
+
+  const retrieveImageFromIPFS = (ipfsHash) => {
+    return fetch.get(`https://ipfs.io/ipfs/${ipfsHash}`);
+  };
+
+
+  /**
+   * Upload to IPFS and get the SVG's Content ID (CID)
+   */
+  const uploadToIPFS = async (svg) => {
+    let url;
+    /* upload the file */
+    try {
+      const base64SVG = Buffer.from(svg).toString('base64');
+
+      console.log(`BSCG> ${base64SVG}`);
+
+
+      // We set the title of our NFT as the generated word.
+      const metaData = `"{'name': 'My 3w NFT', 'description': 'A highly acclaimed collection of Legal NFTs.',  'image': 'data:image/svg+xml;base64,${base64SVG}'}"`;
+
+
+      const base64JsonMetadata = Buffer.from(metaData).toString('base64');
+      // data:application/json;base64,
+
+      console.log(`MEtadata > ${base64JsonMetadata}`)
+      const jsonFile = `data:application/json;base64,${base64JsonMetadata}`;
+      const added = await ipfs.add(jsonFile);
+      url = `https://infura-ipfs.io/ipfs/${added.path}`
+      console.log(`Added svg: ${JSON.stringify(added)} && url: ${url}`);
+    } catch (error) {
+      console.log(`Error IPFS> ${error}`)
+    }
+    return url;
+
+  }
+
+  const getNFTcID = async (event) => {
+    event.preventDefault();
+    // We go and randomly grab one word from each of the three arrays.
+    const first = pickRandomFirstWord();
+    const second = pickRandomSecondWord();
+    const third = pickRandomThirdWord();
+    const combinedWord = `${first}${second}${third}`;
+
+    // Add the random color in.
+    const randomColor = pickRandomColor();
+    const finalSvg = `${svgPartOne}${randomColor}${svgPartTwo}${combinedWord}</text></svg>`;
+
+    console.log(`Getting NFT URL > SVg ==>   ${finalSvg}`);
+    setLoading(true);
+    const url = await uploadToIPFS(finalSvg);
+    setLoading(false);
+    return url;
+    //Generate 3 word Square SVG NFTs here  
+    //upload them to IPFS 
+    //Then return the IPFS Content Hash ID to call MINT function.
+  }
+
+
   const askContractToMintNft = async () => {
 
     try {
@@ -160,18 +249,23 @@ export default function Home() {
       console.log("Going to pop wallet now to pay gas...")
       setLoading(true);
 
-      let nftTxn = await connectedContract.makeAnEpicNFT();
+      let ipfsTokenURI = await getNFTcID();
+      // ipfsTokenURI = `ipfs://${ipfsTokenURI}`
+
+      let nftTxn = await connectedContract.mintIpfsNFT(ipfsTokenURI);
+      // let nftTxn = await connectedContract.makeAnEpicNFT();
       console.log("Mining...please wait.")
       await nftTxn.wait();
 
       setLoading(false);
-      console.log(`Mined, see transaction: https://ropsten.etherscan.io/tx/${nftTxn.hash}`);
+      console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
 
 
     } catch (error) {
       console.log(error)
     }
   }
+
 
 
   // Render Methods
@@ -186,7 +280,7 @@ export default function Home() {
     // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
     if (!walletConnected) {
       web3ModalRef.current = new Web3Modal({
-        network: "ropsten", // optional
+        network: "rinkeby", // optional
         // cacheProvider: true, // optional
         disableInjectedProvider: false,
         providerOptions: {} // required
@@ -221,7 +315,7 @@ export default function Home() {
           {!walletConnected ? (
             renderNotConnectedContainer()
           ) : (
-            <button disabled={loading} onClick={askContractToMintNft} className={[styles.ctaButton, styles.connectWalletButton].join(" ")}>
+            <button disabled={loading} onClick={getNFTcID} className={[styles.ctaButton, styles.connectWalletButton].join(" ")}>
               Mint NFT
             </button>
           )}

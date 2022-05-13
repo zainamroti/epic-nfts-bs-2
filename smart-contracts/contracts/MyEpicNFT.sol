@@ -92,7 +92,6 @@ contract MyEpicNFT is ERC721URIStorage {
     string memory randomColor = pickRandomColor(newItemId);
     string memory finalSvg = string(abi.encodePacked(svgPartOne, randomColor, svgPartTwo, combinedWord, "</text></svg>"));
 
-
     string memory json = Base64.encode(
             abi.encodePacked(
                 '{"name": "',
@@ -118,6 +117,26 @@ contract MyEpicNFT is ERC721URIStorage {
     
     // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
+  
+    _tokenIds.increment();
+    console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
+
+    emit NewEpicNFTMinted(msg.sender, newItemId);
+  }
+
+  function mintIpfsNFT(ipfsTokenURI) public {
+    require(_tokenIds.current() < maxNFTs, string(abi.encodePacked("Max ", Strings.toString(maxNFTs), " NFTs can be minted.")));
+
+    uint256 newItemId = _tokenIds.current();
+
+    console.log("\n--------------------");
+    console.log(ipfsTokenURI);
+    console.log("--------------------\n");
+
+    _safeMint(msg.sender, newItemId);
+    
+    // Update your URI!!!
+    _setTokenURI(newItemId, ipfsTokenURI);
   
     _tokenIds.increment();
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);

@@ -18,20 +18,21 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const ALCHEMY_API_KEY_URL = process.env.ALCHEMY_API_KEY_URL;
+const ALCHEMY_API_KEY_URL_RINKEBY = process.env.ALCHEMY_API_KEY_URL_RINKEBY;
+const ALCHEMY_API_KEY_URL_ROPSTEN = process.env.ALCHEMY_API_KEY_URL_ROPSTEN;
 
-//  const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
+const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
 const ROPSTEN_PRIVATE_KEY = process.env.ROPSTEN_PRIVATE_KEY;
 
 module.exports = {
   solidity: "0.8.4",
   networks: {
-    //  rinkeby: {
-    //    url: ALCHEMY_API_KEY_URL,
-    //    accounts: [RINKEBY_PRIVATE_KEY],
-    //  },
+    rinkeby: {
+      url: ALCHEMY_API_KEY_URL_RINKEBY,
+      accounts: [RINKEBY_PRIVATE_KEY],
+    },
     ropsten: {
-      url: ALCHEMY_API_KEY_URL,
+      url: ALCHEMY_API_KEY_URL_ROPSTEN,
       accounts: [ROPSTEN_PRIVATE_KEY],
     },
   },
