@@ -12,6 +12,7 @@ https://epic-nfts-bs-2.vercel.app/
 ![App Screenshot](https://github.com/zainamroti/epic-nfts-bs-2/blob/master/epic-nfts/public/s2.png?raw=true)
 ![App Screenshot](https://github.com/zainamroti/epic-nfts-bs-2/blob/master/epic-nfts/public/s3.png?raw=true)
 ![App Screenshot](https://github.com/zainamroti/epic-nfts-bs-2/blob/master/epic-nfts/public/s4.png?raw=true)
+![One of the Minted NFTs](https://testnet-api.rarible.org/content/embedded/a9e3b41591fbbbf69cfd2e9f1e327a64940df8451d0c62e55ec9d3dde22857fa)
 
 
 ## Badges
